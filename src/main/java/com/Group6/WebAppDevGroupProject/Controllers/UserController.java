@@ -1,7 +1,7 @@
 package com.Group6.WebAppDevGroupProject.Controllers;
 
 import com.Group6.WebAppDevGroupProject.Models.User;
-import com.Group6.WebAppDevGroupProject.Repositories.UserRepository;
+import com.Group6.WebAppDevGroupProject.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,7 +14,7 @@ import java.util.List;
 public class UserController {
 
     @Autowired
-    private UserRepository userRepository;
+    private UserService userService;
 
     // Register new user
     @PostMapping("/register")
@@ -29,14 +29,16 @@ public class UserController {
             return ResponseEntity.badRequest().body("Password cannot be blank");
         }
         // Optional: check if username or email already exists (not shown here)
-        User savedUser = userRepository.save(user);
-        return ResponseEntity.ok(savedUser);
+        //User savedUser = userService.save(user); // --> Temporary
+        //return ResponseEntity.ok(savedUser); // --> Temporary
+        return null; // Temporary
     }
 
     // Login
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody User loginData) {
-        User user = userRepository.findByUsername(loginData.getUsername());
+        //User user = userService.findByUsername(loginData.getUsername());
+        User user = new User(); // Temporary
         if (user != null && user.getPassword().equals(loginData.getPassword())) {
             return ResponseEntity.ok("Login successful as " + user.getRole());
         }
@@ -46,14 +48,16 @@ public class UserController {
     // Get all users
     @GetMapping
     public List<User> getAllUsers() {
-        return userRepository.findAll();
+        //return userService.findAll();
+        return null; // Temporary
     }
 
     // Get user by ID
     @GetMapping("/{id}")
     public ResponseEntity<User> getUserById(@PathVariable int id) {
-        return userRepository.findById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        //return userService.findById(id)
+        //        .map(ResponseEntity::ok)
+        //        .orElse(ResponseEntity.notFound().build());
+        return null; // Temporary
     }
 }

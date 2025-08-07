@@ -2,12 +2,12 @@ package com.Group6.WebAppDevGroupProject.Controllers;
 
 import com.Group6.WebAppDevGroupProject.Models.MenuItem;
 import com.Group6.WebAppDevGroupProject.Models.Order;
-import com.Group6.WebAppDevGroupProject.Repositories.MenuItemRepository;
-import com.Group6.WebAppDevGroupProject.Repositories.OrderRepository;
+import com.Group6.WebAppDevGroupProject.Service.OrderService;
+import com.Group6.WebAppDevGroupProject.Service.MenuService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.Map;
 import java.util.Optional;
 
@@ -19,10 +19,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class OrderController {
 
     @Autowired
-    private OrderRepository orderRepository;
+    private OrderService orderService;
 
     @Autowired
-    private MenuItemRepository menuItemRepository;
+    private MenuService menuService;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -37,8 +37,8 @@ public class OrderController {
             for (Map.Entry<String, Integer> entry : items.entrySet()) {
                 int itemId = Integer.parseInt(entry.getKey());
                 int quantity = entry.getValue();
-
-                Optional<MenuItem> optionalItem = menuItemRepository.findById(itemId);
+                /*
+                Optional<MenuItem> optionalItem = menuService.findById(itemId);
                 if (optionalItem.isEmpty()) return "Item ID " + itemId + " not found";
 
                 MenuItem item = optionalItem.get();
@@ -48,16 +48,17 @@ public class OrderController {
 
                 // Decrease stock
                 item.setStock(item.getStock() - quantity);
-                menuItemRepository.save(item);
+                menuService.save(item);
+                 */
             }
 
             Order order = new Order();
             order.setUser_id(userId);
             order.setOrder_items(orderItemsJson);
-            order.setOrder_time(LocalDateTime.now());
+            order.setOrder_time(new Date());
             order.setOrder_status("ORDER SENT");
 
-            orderRepository.save(order);
+//            orderService.save(order);
             return "Order placed successfully!";
         } catch (Exception e) {
             return "Order failed: " + e.getMessage();
@@ -67,7 +68,8 @@ public class OrderController {
     // DELETE: Cancel order (only if more than 24 hours before order time)
     @DeleteMapping("/{id}")
     public String cancelOrder(@PathVariable int id) {
-        Optional<Order> optionalOrder = orderRepository.findById(id);
+        /*
+        Optional<Order> optionalOrder = orderService.findById(id);
         if (optionalOrder.isEmpty()) return "Order not found";
 
         Order order = optionalOrder.get();
@@ -82,25 +84,28 @@ public class OrderController {
                     int itemId = Integer.parseInt(entry.getKey());
                     int quantity = entry.getValue();
 
-                    MenuItem item = menuItemRepository.findById(itemId).orElse(null);
+                    MenuItem item = menuService.findById(itemId).orElse(null);
                     if (item != null) {
                         item.setStock(item.getStock() + quantity);
-                        menuItemRepository.save(item);
+                        menuService.save(item);
                     }
                 }
             } catch (Exception ignored) {}
 
             order.setOrder_status("CANCELLED");
-            orderRepository.save(order);
+            orderService.save(order);
             return "Order cancelled";
         } else {
             return "Cancellation deadline passed (must be within 24h of order time)";
         }
+         */
+        return "Temporary";
     }
 
     // GET: Admin view all orders
     @GetMapping
     public Iterable<Order> getAllOrders() {
-        return orderRepository.findAll();
+        //return orderService.findAll();
+        return null;
     }
 }

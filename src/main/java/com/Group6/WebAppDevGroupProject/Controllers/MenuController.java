@@ -1,34 +1,34 @@
 package com.Group6.WebAppDevGroupProject.Controllers;
 
 import com.Group6.WebAppDevGroupProject.Models.MenuItem;
-import com.Group6.WebAppDevGroupProject.Repositories.MenuItemRepository;
+import com.Group6.WebAppDevGroupProject.Service.MenuService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
 @RequestMapping("/menu")
 @CrossOrigin
-public class MenuItemController {
+public class MenuController {
 
     @Autowired
-    private MenuItemRepository menuItemRepository;
+    private MenuService menuService;
 
     // GET all items
     @GetMapping
     public List<MenuItem> getAllItems() {
-        return menuItemRepository.findAll();
+        //return menuService.findAll();
+        return null; // Temporary
     }
 
     // GET item by id
     @GetMapping("/{id}")
     public ResponseEntity<MenuItem> getItemById(@PathVariable int id) {
-        return menuItemRepository.findById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        //return menuService.findById(id)
+        //        .map(ResponseEntity::ok)
+        //        .orElse(ResponseEntity.notFound().build());
+        return null; // Temporary
     }
 
     // POST create new item
@@ -38,26 +38,28 @@ public class MenuItemController {
         if (item.getName() == null || item.getName().trim().isEmpty()) {
             return ResponseEntity.badRequest().body("Name cannot be blank");
         }
-        if (item.getPrice() == null || item.getPrice().compareTo(BigDecimal.ZERO) < 0) {
+        if (item.getPrice() != 0.0f) {
             return ResponseEntity.badRequest().body("Price cannot be negative");
         }
         if (item.getStock() < 0) {
             return ResponseEntity.badRequest().body("Stock cannot be negative");
         }
-        MenuItem saved = menuItemRepository.save(item);
-        return ResponseEntity.ok(saved);
+        //MenuItem saved = menuService.save(item);
+        //return ResponseEntity.ok(saved);
+        return null;
     }
 
     // PUT update existing item
     @PutMapping("/{id}")
     public ResponseEntity<?> updateItem(@PathVariable int id, @RequestBody MenuItem newItem) {
-        return menuItemRepository.findById(id)
+        /*
+        return menuService.findById(id)
                 .map(item -> {
                     if (newItem.getName() == null || newItem.getName().trim().isEmpty()) {
                         return ResponseEntity.badRequest().body("Name cannot be blank");
                     }
-                    if (newItem.getPrice() == null || newItem.getPrice().compareTo(BigDecimal.ZERO) < 0) {
-                        return ResponseEntity.badRequest().body("Price cannot be negative");
+                    if (newItem.getPrice() != 0.0f) {
+                        return ResponseEntity.badRequest().body("Price cannot be negative nor 0.0");
                     }
                     if (newItem.getStock() < 0) {
                         return ResponseEntity.badRequest().body("Stock cannot be negative");
@@ -66,19 +68,23 @@ public class MenuItemController {
                     item.setDescription(newItem.getDescription());
                     item.setPrice(newItem.getPrice());
                     item.setStock(newItem.getStock());
-                    menuItemRepository.save(item);
+                    menuService.save(item);
                     return ResponseEntity.ok(item);
                 })
                 .orElse(ResponseEntity.notFound().build());
+         */
+        return null;
     }
 
     // DELETE item by id
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteItem(@PathVariable int id) {
-        if (!menuItemRepository.existsById(id)) {
+/*
+        if (!menuService.existsById(id)) {
             return ResponseEntity.notFound().build();
         }
-        menuItemRepository.deleteById(id);
+        menuService.deleteById(id);
+*/
         return ResponseEntity.ok().body("Menu item deleted successfully");
     }
 }
