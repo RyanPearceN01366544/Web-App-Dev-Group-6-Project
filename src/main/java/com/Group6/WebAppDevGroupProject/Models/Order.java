@@ -7,7 +7,7 @@ import java.util.Date;
 public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int order_id;
+    private long order_id;
     private int user_id;
     private String order_items;
     @Temporal(TemporalType.TIMESTAMP)
@@ -17,7 +17,7 @@ public class Order {
     private String order_status;
 
     // -- Basic Getters --
-    public int getOrder_id() { return order_id; }
+    public long getOrder_id() { return order_id; }
     public int getUser_id() { return user_id; }
     public String getOrder_items() { return order_items; }
     public Date getOrder_time() { return order_time; }
@@ -25,7 +25,7 @@ public class Order {
     public String getOrder_status() { return order_status; }
 
     // -- Basic Setters --
-    public void setOrder_id(int order_id) { this.order_id = order_id; }
+    public void setOrder_id(long order_id) { this.order_id = order_id; }
     public void setUser_id(int user_id) { this.user_id = user_id; }
     public void setOrder_items(String order_items) { this.order_items = order_items; }
     public void setOrder_time(Date order_time) { this.order_time = order_time; }
