@@ -29,21 +29,21 @@ public class OrderController {
     private UserService userService;
 
     @GetMapping("/")
-    public String list(Model model_, @ModelAttribute User user_) {
-        model_.addAttribute("orders", orderService.getAllOrdersFromUser(user_.getUser_id()));
+    public String list(Model model_) {
+        model_.addAttribute("orders", orderService.getAllOrdersFromUser(user.getUser_id()));
         return "orders-list";
     }
     @GetMapping("/active")
-    public String listActiveOrders(Model model_, @ModelAttribute User user_) {
-        model_.addAttribute("orders", orderService.getAllActiveOrdersFromUser(user_.getUser_id()));
+    public String listActiveOrders(Model model_) {
+        model_.addAttribute("orders", orderService.getAllActiveOrdersFromUser(user.getUser_id()));
         return "orders-list";
     }
     @GetMapping("/{id}")
-    public String getOrder(Model model_, @ModelAttribute User user_, @PathVariable long id) {
+    public String getOrder(Model model_, @PathVariable("id") long id) {
         Order ord_ = orderService.getOrderById(id);
-        if (ord_.getUser_id() == user_.getUser_id() ||
-            user_.getRole().equals("staff") ||
-            user_.getRole().equals("admin")) {
+        if (ord_.getUser_id() == user.getUser_id() ||
+            user.getRole().equals("staff") ||
+            user.getRole().equals("admin")) {
                 model_.addAttribute("order", orderService.getOrderById(id));
                 model_.addAttribute("menuItems", orderService.getMenuItemsFromOrder(id));
         }
@@ -56,15 +56,15 @@ public class OrderController {
         return "orders-create";
     }
     @PostMapping("/save")
-    public String editForm(@ModelAttribute Order ord_) {
+    public String editForm(Model model_, @ModelAttribute Order ord_) {
         orderService.saveOrder(ord_);
         return "orders-thankyou";
     }
     @GetMapping("/edit/{id}")
-    public String editView(@PathVariable("id") long id, Model model_, @ModelAttribute User user_) {
-        Order ord_ = orderService.getOrderById(user_.getUser_id());
-        if (ord_.getUser_id() == user_.getUser_id() || user_.getRole().equals("staff") || user_.getRole().equals("admin")) {
-            model_.addAttribute("order", orderService.getOrderById(user_.getUser_id()));
+    public String editView(Model model_, @PathVariable("id") long id) {
+        Order ord_ = orderService.getOrderById(user.getUser_id());
+        if (ord_.getUser_id() == user.getUser_id() || user.getRole().equals("staff") || user.getRole().equals("admin")) {
+            model_.addAttribute("order", orderService.getOrderById(user.getUser_id()));
         }
         return "order-edit";
     }
