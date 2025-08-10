@@ -2,110 +2,84 @@ package com.Group6.WebAppDevGroupProject.Controllers;
 
 import com.Group6.WebAppDevGroupProject.Models.MenuItem;
 import com.Group6.WebAppDevGroupProject.Models.Order;
+import com.Group6.WebAppDevGroupProject.Models.User;
 import com.Group6.WebAppDevGroupProject.Service.OrderService;
 import com.Group6.WebAppDevGroupProject.Service.MenuService;
+import com.Group6.WebAppDevGroupProject.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-@RestController
+@Controller
 @RequestMapping("/orders")
-@CrossOrigin
 public class OrderController {
-
     @Autowired
     private OrderService orderService;
-
     @Autowired
     private MenuService menuService;
+    @Autowired
+    private UserService userService;
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
-
-    // POST: Place new order
-    @PostMapping
-    public String placeOrder(@RequestParam int userId, @RequestBody String orderItemsJson) {
-        try {
-            // Parse JSON: { "1": 2, "3": 1 }
-            Map<String, Integer> items = objectMapper.readValue(orderItemsJson, Map.class);
-
-            // Check stock & update
-            for (Map.Entry<String, Integer> entry : items.entrySet()) {
-                int itemId = Integer.parseInt(entry.getKey());
-                int quantity = entry.getValue();
-                /*
-                Optional<MenuItem> optionalItem = menuService.findById(itemId);
-                if (optionalItem.isEmpty()) return "Item ID " + itemId + " not found";
-
-                MenuItem item = optionalItem.get();
-                if (item.getStock() < quantity) {
-                    return "Not enough stock for: " + item.getName();
-                }
-
-                // Decrease stock
-                item.setStock(item.getStock() - quantity);
-                menuService.save(item);
-                 */
-            }
-
-            Order order = new Order();
-            order.setUser_id(userId);
-            order.setOrder_items(orderItemsJson);
-            order.setOrder_time(new Date());
-            order.setOrder_status("ORDER SENT");
-
-//            orderService.save(order);
-            return "Order placed successfully!";
-        } catch (Exception e) {
-            return "Order failed: " + e.getMessage();
-        }
+    @GetMapping("/")
+    public String list(Model model_) {
+        //model_.addAttribute("orders", orderService.getAllOrdersFromUser(user.getUser_id()));
+        return "orders-list";
     }
-
-    // DELETE: Cancel order (only if more than 24 hours before order time)
-    @DeleteMapping("/{id}")
-    public String cancelOrder(@PathVariable int id) {
+    @GetMapping("/active")
+    public String listActiveOrders(Model model_) {
+        //model_.addAttribute("orders", orderService.getAllActiveOrdersFromUser(user.getUser_id()));
+        return "orders-list";
+    }
+    @GetMapping("/{id}")
+    public String getOrder(Model model_, @PathVariable("id") long id) {
+        Order ord_ = orderService.getOrderById(id);
         /*
-        Optional<Order> optionalOrder = orderService.findById(id);
-        if (optionalOrder.isEmpty()) return "Order not found";
-
-        Order order = optionalOrder.get();
-        LocalDateTime now = LocalDateTime.now();
-        LocalDateTime cancelDeadline = order.getOrder_time().plusHours(24);
-
-        if (now.isBefore(cancelDeadline)) {
-            // restore stock
-            try {
-                Map<String, Integer> items = objectMapper.readValue(order.getOrder_items(), Map.class);
-                for (Map.Entry<String, Integer> entry : items.entrySet()) {
-                    int itemId = Integer.parseInt(entry.getKey());
-                    int quantity = entry.getValue();
-
-                    MenuItem item = menuService.findById(itemId).orElse(null);
-                    if (item != null) {
-                        item.setStock(item.getStock() + quantity);
-                        menuService.save(item);
-                    }
-                }
-            } catch (Exception ignored) {}
-
-            order.setOrder_status("CANCELLED");
-            orderService.save(order);
-            return "Order cancelled";
-        } else {
-            return "Cancellation deadline passed (must be within 24h of order time)";
+        if (ord_.getUser_id() == user.getUser_id() ||
+            user.getRole().equals("staff") ||
+            user.getRole().equals("admin")) {
+                model_.addAttribute("order", orderService.getOrderById(id));
+                model_.addAttribute("menuItems", orderService.getMenuItemsFromOrder(id));
         }
-         */
-        return "Temporary";
+        */
+        return "orders-details";
     }
-
-    // GET: Admin view all orders
-    @GetMapping
-    public Iterable<Order> getAllOrders() {
-        //return orderService.findAll();
-        return null;
+    @GetMapping("/new")
+    public String create(Model model_) {
+        model_.addAttribute("order", new Order());
+//        model_.addAttribute("menuItems", menuService) // -> Solve Later
+        return "orders-create";
+    }
+    @PostMapping("/save")
+    public String editForm(Model model_, @ModelAttribute Order ord_) {
+        orderService.saveOrder(ord_);
+        return "orders-thankyou";
+    }
+    @GetMapping("/edit/{id}")
+    public String editView(Model model_, @PathVariable("id") long id) {
+        /*
+        Order ord_ = orderService.getOrderById(user.getUser_id());
+        if (ord_.getUser_id() == user.getUser_id() || user.getRole().equals("staff") || user.getRole().equals("admin")) {
+            model_.addAttribute("order", orderService.getOrderById(user.getUser_id()));
+        }
+        */
+        return "order-edit";
+    }
+    @PostMapping("/edit")
+    public String edit(@ModelAttribute Order ord_) {
+        orderService.updateOrder(ord_.getOrder_id(), ord_);
+        return "redirect:/orders/";
+    }
+    @GetMapping("/delete/{id}")
+    public String delete(@PathVariable("id") long id) {
+        orderService.deleteOrder(id);
+        return "redirect:/orders/";
     }
 }
