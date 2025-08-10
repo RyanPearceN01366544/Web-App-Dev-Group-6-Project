@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>My Orders</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<header><h1>My Orders</h1></header>
+<div class="container">
+    <table class="table">
+        <thead>
+        <tr><th>Order ID</th><th>Items</th><th>Status</th><th>Action</th></tr>
+        </thead>
+        <tbody>
+        <tr th:each="order : ${orders}">
+            <td th:text="${order.id}"></td>
+            <td>
+                <ul>
+                    <li th:each="item : ${order.items}" th:text="${item.name}"></li>
+                </ul>
+            </td>
+            <td th:text="${order.status}"></td>
+            <td>
+                <form th:if="${order.status == 'PENDING'}"
+                      th:action="@{/order/cancel/{id}(id=${order.id})}"
+                      method="post">
+                    <button type="submit">Cancel</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

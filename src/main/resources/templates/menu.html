@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Menu</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<header><h1>Menu</h1></header>
+<div class="container">
+    <table class="table">
+        <thead>
+        <tr><th>Name</th><th>Description</th><th>Price</th><th>Stock</th><th>Action</th></tr>
+        </thead>
+        <tbody>
+        <tr th:each="item : ${menuItems}">
+            <td th:text="${item.name}"></td>
+            <td th:text="${item.description}"></td>
+            <td th:text="${item.price}"></td>
+            <td th:text="${item.stock}"></td>
+            <td>
+                <form th:action="@{/order/add/{id}(id=${item.id})}" method="post">
+                    <button type="submit">Add to Order</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

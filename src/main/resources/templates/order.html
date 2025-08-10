@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Current Order</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<header><h1>Your Current Order</h1></header>
+<div class="container">
+  <table class="table">
+    <thead>
+    <tr><th>Item</th><th>Price</th><th>Action</th></tr>
+    </thead>
+    <tbody>
+    <tr th:each="item : ${orderItems}">
+      <td th:text="${item.name}"></td>
+      <td th:text="${item.price}"></td>
+      <td>
+        <form th:action="@{/order/remove/{id}(id=${item.id})}" method="post">
+          <button type="submit">Remove</button>
+        </form>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+  <form action="/order/submit" method="post">
+    <button type="submit">Submit Order</button>
+  </form>
+</div>
+</body>
+</html>
