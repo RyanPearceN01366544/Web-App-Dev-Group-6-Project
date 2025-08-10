@@ -30,23 +30,25 @@ public class OrderController {
 
     @GetMapping("/")
     public String list(Model model_) {
-        model_.addAttribute("orders", orderService.getAllOrdersFromUser(user.getUser_id()));
+        //model_.addAttribute("orders", orderService.getAllOrdersFromUser(user.getUser_id()));
         return "orders-list";
     }
     @GetMapping("/active")
     public String listActiveOrders(Model model_) {
-        model_.addAttribute("orders", orderService.getAllActiveOrdersFromUser(user.getUser_id()));
+        //model_.addAttribute("orders", orderService.getAllActiveOrdersFromUser(user.getUser_id()));
         return "orders-list";
     }
     @GetMapping("/{id}")
     public String getOrder(Model model_, @PathVariable("id") long id) {
         Order ord_ = orderService.getOrderById(id);
+        /*
         if (ord_.getUser_id() == user.getUser_id() ||
             user.getRole().equals("staff") ||
             user.getRole().equals("admin")) {
                 model_.addAttribute("order", orderService.getOrderById(id));
                 model_.addAttribute("menuItems", orderService.getMenuItemsFromOrder(id));
         }
+        */
         return "orders-details";
     }
     @GetMapping("/new")
@@ -62,10 +64,12 @@ public class OrderController {
     }
     @GetMapping("/edit/{id}")
     public String editView(Model model_, @PathVariable("id") long id) {
+        /*
         Order ord_ = orderService.getOrderById(user.getUser_id());
         if (ord_.getUser_id() == user.getUser_id() || user.getRole().equals("staff") || user.getRole().equals("admin")) {
             model_.addAttribute("order", orderService.getOrderById(user.getUser_id()));
         }
+        */
         return "order-edit";
     }
     @PostMapping("/edit")
