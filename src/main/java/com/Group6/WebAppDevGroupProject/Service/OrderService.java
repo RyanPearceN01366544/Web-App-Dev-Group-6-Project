@@ -4,9 +4,11 @@ import com.Group6.WebAppDevGroupProject.Models.Order;
 import com.Group6.WebAppDevGroupProject.Repository.OrderRepository;
 import com.Group6.WebAppDevGroupProject.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+@Service
 public class OrderService {
     @Autowired
     private OrderRepository orderRepo;

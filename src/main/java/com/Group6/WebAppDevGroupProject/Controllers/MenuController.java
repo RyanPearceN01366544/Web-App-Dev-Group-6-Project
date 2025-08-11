@@ -11,7 +11,7 @@ import java.util.List;
 @RequestMapping("/menu")
 @CrossOrigin
 public class MenuController {
-
+    /*
     @Autowired
     private MenuService menuService;
 
@@ -72,20 +72,19 @@ public class MenuController {
                     return ResponseEntity.ok(item);
                 })
                 .orElse(ResponseEntity.notFound().build());
-         */
+
         return null;
     }
 
     // DELETE item by id
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteItem(@PathVariable int id) {
-/*
-        if (!menuService.existsById(id)) {
-            return ResponseEntity.notFound().build();
-        }
-        menuService.deleteById(id);
-*/
+//        if (!menuService.existsById(id)) {
+//            return ResponseEntity.notFound().build();
+//        }
+//        menuService.deleteById(id);
         return ResponseEntity.ok().body("Menu item deleted successfully");
     }
+    */
 }
 
