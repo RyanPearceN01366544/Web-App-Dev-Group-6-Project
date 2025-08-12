@@ -45,8 +45,8 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/users/login", "/users/register", "/css/**").permitAll()
-                .anyRequest().authenticated()
+                    .requestMatchers("/users/login", "/users/Login", "/users/register", "/users/Register", "/css/**").permitAll()
+                    .anyRequest().authenticated()
             )
             .formLogin(login -> login
                 .loginPage("/users/login")
@@ -54,8 +54,8 @@ public class SecurityConfig {
                 .permitAll()
             )
             .logout(logout -> logout
-                .logoutUrl("/users/login")
-                .logoutSuccessUrl("/users/login")
+                .logoutUrl("/users/logout")
+                .logoutSuccessUrl("/users/logout")
         );
         return http.build();
     }
