@@ -16,14 +16,14 @@
       <td th:text="${item.name}"></td>
       <td th:text="${item.price}"></td>
       <td>
-        <form th:action="@{/order/remove/{id}(id=${item.id})}" method="post">
+        <form th:action="@{/orders/remove/{id}(id=${item.id})}" method="post">
           <button type="submit">Remove</button>
         </form>
       </td>
     </tr>
     </tbody>
   </table>
-  <form action="/order/submit" method="post">
+  <form action="/orders/submit" method="post">
     <button type="submit">Submit Order</button>
   </form>
 </div>

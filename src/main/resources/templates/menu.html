@@ -18,7 +18,7 @@
             <td th:text="${item.price}"></td>
             <td th:text="${item.stock}"></td>
             <td>
-                <form th:action="@{/order/add/{id}(id=${item.id})}" method="post">
+                <form th:action="@{/orders/add/{id}(id=${item.id})}" method="post">
                     <button type="submit">Add to Order</button>
                 </form>
             </td>

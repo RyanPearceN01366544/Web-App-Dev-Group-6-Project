@@ -70,19 +70,19 @@ public class OrderService {
     public boolean cancelOrder(long id_) {
         Optional<Order> orderOpt = orderRepo.findById(id_);
         if (orderOpt.isPresent()) {
-            Order order = orderOpt.get();
-            if (!"PENDING".equals(order.getOrder_status())) {
+            Order orders = orderOpt.get();
+            if (!"PENDING".equals(orders.getOrder_status())) {
                 return false; // Only pending orders can be cancelled
             }
             long now = System.currentTimeMillis();
-            Date requestedDate = order.getOrder_requested();
+            Date requestedDate = orders.getOrder_requested();
             if (requestedDate == null) {
                 return false; // No due date set
             }
             long requestedTime = requestedDate.getTime();
             if (requestedTime - now >= CANCEL_TIME_LIMIT_MS) {
-                order.setOrder_status("CANCELLED");
-                orderRepo.save(order);
+                orders.setOrder_status("CANCELLED");
+                orderRepo.save(orders);
                 return true;
             }
         }
@@ -90,14 +90,14 @@ public class OrderService {
     }
 
     public Order updateOrder(long id_, Order ord_) {
-        return orderRepo.findById(id_).map(order -> {
-            order.setOrder_items(ord_.getOrder_items());
-            order.setOrder_requested(ord_.getOrder_requested());
-            order.setOrder_time(ord_.getOrder_time());
-            order.setOrder_status(ord_.getOrder_status());
-            order.setOrder_items(getMenuItemsStringFromOrder(getMenuItemsMapFromOrder(ord_)));
-            handleStocks(order, ord_);
-            return orderRepo.save(order);
+        return orderRepo.findById(id_).map(orders -> {
+            orders.setOrder_items(ord_.getOrder_items());
+            orders.setOrder_requested(ord_.getOrder_requested());
+            orders.setOrder_time(ord_.getOrder_time());
+            orders.setOrder_status(ord_.getOrder_status());
+            orders.setOrder_items(getMenuItemsStringFromOrder(getMenuItemsMapFromOrder(ord_)));
+            handleStocks(orders, ord_);
+            return orderRepo.save(orders);
         }).orElse(null);
     }
     public void deleteOrder(long id_) {

@@ -6,15 +6,12 @@ import com.Group6.WebAppDevGroupProject.Service.OrderService;
 import com.Group6.WebAppDevGroupProject.Service.MenuService;
 import com.Group6.WebAppDevGroupProject.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.*;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Controller
 @RequestMapping("/orders")

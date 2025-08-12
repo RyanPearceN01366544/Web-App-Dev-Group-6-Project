@@ -12,12 +12,12 @@ import java.util.List;
 // (Can't Remember if we covered it in class or not. - Ryan)
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long> {
-    @Query("SELECT o FROM Order o WHERE o.user.id = :userId")
+    @Query("SELECT o FROM Orders o WHERE o.user_id = :userId")
     List<Order> findAllByUser(@Param("userId") long userId);
 
-    @Query("SELECT o FROM Order o WHERE o.status <> 'CLOSED'")
+    @Query("SELECT o FROM Orders o WHERE o.order_status <> 'CLOSED'")
     List<Order> findAllActive();
 
-    @Query("SELECT o FROM Order o WHERE o.user.id = :userId AND o.status <> 'CLOSED'")
+    @Query("SELECT o FROM Orders o WHERE o.user_id = :userId AND o.order_status <> 'CLOSED'")
     List<Order> findAllActiveByUser(@Param("userId") long userId);
 }

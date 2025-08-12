@@ -24,9 +24,9 @@ public class SecurityConfig {
     @Bean
     public UserDetailsService userDetailsService() {
         List<UserDetails> usersDetails_ = new ArrayList<>();
-        List<User> users_ = userService.findAll();
+        List<User> user_ = userService.findAll();
 
-        for (User usr_ : users_) {
+        for (User usr_ : user_) {
             usersDetails_.add(org.springframework.security.core.userdetails.User.builder()
                     .username(usr_.getUsername())
                     .password(passwordEncoder().encode(usr_.getPassword()))
@@ -45,7 +45,7 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("", "", "/css/**").permitAll()
+                .requestMatchers("/users/login", "/users/register", "/css/**").permitAll()
                 .anyRequest().authenticated()
             )
             .formLogin(login -> login

@@ -19,7 +19,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
      * @param email The user's email.
      * @return Optional containing the user if found, otherwise empty.
      */
-    @Query(value = "SELECT * FROM user WHERE email = :email", nativeQuery = true)
+    @Query(value = "SELECT * FROM users WHERE email = :email", nativeQuery = true)
     Optional<User> findByEmail(@Param("email") String email);
 
     /**
@@ -27,6 +27,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
      * @param username The user's username.
      * @return Optional containing the user if found, otherwise empty.
      */
-    @Query(value = "SELECT * FROM user WHERE username = :username", nativeQuery = true)
+    @Query(value = "SELECT * FROM users WHERE username = :username", nativeQuery = true)
     Optional<User> findByUsername(@Param("username") String username);
 }
