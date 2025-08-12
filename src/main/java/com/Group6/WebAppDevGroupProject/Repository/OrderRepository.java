@@ -12,10 +12,12 @@ import java.util.List;
 // (Can't Remember if we covered it in class or not. - Ryan)
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long> {
-    @Query(value = "SELECT * FROM orders o WHERE o.user_id = :user_id", nativeQuery = true)
-    List<Order> findAllByUser(@Param("user_id") long user_id);
-    @Query(value = "SELECT * FROM orders WHERE NOT status = 'CLOSED'", nativeQuery = true)
+    @Query("SELECT o FROM Order o WHERE o.user.id = :userId")
+    List<Order> findAllByUser(@Param("userId") long userId);
+
+    @Query("SELECT o FROM Order o WHERE o.status <> 'CLOSED'")
     List<Order> findAllActive();
-    @Query(value = "SELECT * FROM orders WHERE user_id = :user_id AND NOT status = 'CLOSED'", nativeQuery = true)
-    List<Order> findAllActiveByUser(@Param("user_id") long user_id);
+
+    @Query("SELECT o FROM Order o WHERE o.user.id = :userId AND o.status <> 'CLOSED'")
+    List<Order> findAllActiveByUser(@Param("userId") long userId);
 }

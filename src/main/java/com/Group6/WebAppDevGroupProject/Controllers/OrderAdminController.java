@@ -23,9 +23,9 @@ public class OrderAdminController {
     public List<Order> list() {
         return orderService.getAllOrders();
     }
-    @GetMapping("/{id}")
-    public Order getOrderDetails(@PathVariable long id) {
-        return orderService.getOrderById(id);
+    @GetMapping("/users/{id}")
+    public List<Order> getAllUserOrders(@PathVariable("id") long id) {
+        return orderService.getAllOrdersFromUser(id);
     }
     @GetMapping("/active/")
     public List<Order> listActiveOrders() {
@@ -33,6 +33,7 @@ public class OrderAdminController {
     }
     @GetMapping("/active/{id}")
     public List<Order> listActiveUserOrders(@PathVariable long id) { return orderService.getAllActiveOrdersFromUser(id); }
+
     @PostMapping("/")
     public Order saveOrder(@RequestBody Order ord_)
     {
@@ -47,7 +48,7 @@ public class OrderAdminController {
     @DeleteMapping("/{id_}")
     public ResponseEntity<Void> deleteOrder(@PathVariable long id_)
     {
-        orderService.deleteOrder(id_);
+        orderService.deleteOrder(id_, true);
         return ResponseEntity.noContent().build();
     }
 }
