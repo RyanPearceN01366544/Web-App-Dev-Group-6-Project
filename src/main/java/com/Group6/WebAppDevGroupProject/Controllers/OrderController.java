@@ -1,6 +1,5 @@
 package com.Group6.WebAppDevGroupProject.Controllers;
 
-import com.Group6.WebAppDevGroupProject.Models.MenuItem;
 import com.Group6.WebAppDevGroupProject.Models.Order;
 import com.Group6.WebAppDevGroupProject.Models.User;
 import com.Group6.WebAppDevGroupProject.Service.OrderService;
@@ -62,6 +61,7 @@ public class OrderController {
         orderService.saveOrder(ord_);
         return "orders-thankyou";
     }
+  
     @GetMapping("/edit/{id}")
     public String editView(Model model_, @PathVariable("id") long id) {
         /*

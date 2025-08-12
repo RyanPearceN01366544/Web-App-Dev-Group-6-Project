@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class MenuService {
+public class MenuitemService {
     // Seed menu with common items
     public void seedMenuItems() {
         if (menuRepository.count() == 0) {
