@@ -59,7 +59,7 @@ public class UserService {
      * @param id The user's ID.
      * @return Optional containing the user if found.
      */
-    public Optional<User> findById(int id) {
+    public Optional<User> findById(long id) {
         return userRepository.findById(id);
     }
 }

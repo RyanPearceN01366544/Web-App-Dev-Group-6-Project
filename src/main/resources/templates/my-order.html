@@ -12,22 +12,22 @@
         <tr><th>Order ID</th><th>Items</th><th>Status</th><th>Action</th></tr>
         </thead>
         <tbody>
-        <tr th:each="order : ${orders}">
-            <td th:text="${order.order_id}"></td>
+        <tr th:each="orders : ${orders}">
+            <td th:text="${orders.order_id}"></td>
             <td>
                 <ul>
-                    <li th:each="item : ${order.items}" th:text="${item.name}"></li>
+                    <li th:each="item : ${orders.items}" th:text="${item.name}"></li>
                 </ul>
             </td>
-            <td th:text="${order.order_status}"></td>
+            <td th:text="${orders.order_status}"></td>
             <td>
-                <div th:if="${order.order_status == 'PENDING'}">
-                    <form th:if="${#dates.diff(order.order_requested, T(java.util.Date).new()) > 24*60*60*1000}"
-                          th:action="@{/orders/delete/{id}(id=${order.order_id})}"
+                <div th:if="${orders.order_status == 'PENDING'}">
+                    <form th:if="${#dates.diff(orders.order_requested, T(java.util.Date).new()) > 24*60*60*1000}"
+                          th:action="@{/orders/delete/{id}(id=${orders.order_id})}"
                           method="get">
                         <button type="submit">Cancel</button>
                     </form>
-                    <span th:if="${#dates.diff(order.order_requested, T(java.util.Date).new()) <= 24*60*60*1000}">
+                    <span th:if="${#dates.diff(orders.order_requested, T(java.util.Date).new()) <= 24*60*60*1000}">
                         <button type="button" disabled>Cancel</button>
                         <span style="color:red;">Cannot cancel within 24 hours of due date</span>
                     </span>

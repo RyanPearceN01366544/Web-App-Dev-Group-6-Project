@@ -3,11 +3,12 @@ package com.Group6.WebAppDevGroupProject.Models;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 
-@Entity
+@Entity(name = "MenuItems")
+@Table(name = "menuitems")
 public class MenuItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private long item_id;
     private String name;
     private String description;
     private BigDecimal price;
@@ -23,6 +24,13 @@ public class MenuItem {
         this.price = BigDecimal.valueOf(price);
         this.stock = stock;
     }
+    public MenuItem(String name, String description, double price, int stock, String category) {
+        this.name = name;
+        this.description = description;
+        this.price = BigDecimal.valueOf(price);
+        this.stock = stock;
+        this.category = category;
+    }
 
     public MenuItem(String name, String description, double price, int stock, String category, String imageUrl) {
         this.name = name;
@@ -33,8 +41,8 @@ public class MenuItem {
         this.imageUrl = imageUrl;
     }
 
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public Long getId() { return item_id; }
+    public void setId(Long id) { this.item_id = id; }
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
     public String getDescription() { return description; }

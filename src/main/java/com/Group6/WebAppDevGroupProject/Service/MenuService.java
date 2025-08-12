@@ -11,6 +11,9 @@ import java.util.Optional;
 @Service
 public class MenuService {
     // Seed menu with common items
+    @Autowired
+    private MenuRepository menuRepository;
+
     public void seedMenuItems() {
         if (menuRepository.count() == 0) {
             menuRepository.save(new MenuItem("Burger", "Beef patty, bun, lettuce, tomato", 5.99, 50));
@@ -31,14 +34,11 @@ public class MenuService {
             menuRepository.save(new MenuItem("Banana", "Fresh banana", 0.99, 40));
         }
     }
-    @Autowired
-    private MenuRepository menuRepository;
-
     public List<MenuItem> getAllMenuItems() {
         return menuRepository.findAll();
     }
 
-    public Optional<MenuItem> getMenuItemById(Long id) {
+    public Optional<MenuItem> getMenuItemById(long id) {
         return menuRepository.findById(id);
     }
 
@@ -46,7 +46,7 @@ public class MenuService {
         return menuRepository.save(item);
     }
 
-    public MenuItem updateMenuItem(Long id, MenuItem item) {
+    public MenuItem updateMenuItem(long id, MenuItem item) {
         return menuRepository.findById(id)
                 .map(existing -> {
                     existing.setName(item.getName());
@@ -58,7 +58,7 @@ public class MenuService {
                 .orElse(null);
     }
 
-    public void deleteMenuItem(Long id) {
+    public void deleteMenuItem(long id) {
         menuRepository.deleteById(id);
     }
 }

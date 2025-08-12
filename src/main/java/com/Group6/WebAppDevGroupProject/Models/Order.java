@@ -3,7 +3,8 @@ package com.Group6.WebAppDevGroupProject.Models;
 import jakarta.persistence.*;
 import java.util.Date;
 
-@Entity
+@Entity(name = "Orders")
+@Table(name = "orders")
 public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
