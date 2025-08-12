@@ -97,7 +97,7 @@ public class OrderController {
     }
     @GetMapping("/delete/{id}")
     public String delete(@PathVariable("id") long id) {
-        orderService.deleteOrder(id);
+        orderService.cancelOrder(id);
         return "redirect:/orders/";
     }
 }

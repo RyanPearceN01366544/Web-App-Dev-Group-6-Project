@@ -46,8 +46,7 @@ public class OrderService {
         Optional<Order> ord_ = orderRepo.findById(id_);
         if (ord_.isPresent()) {
             if (!ord_.get().getOrder_items().equals("[]")) {
-                List<MenuItem> menuItems = getAllMenuItemsFromOrder(ord_.get());
-                return menuItems;
+                return getAllMenuItemsFromOrder(ord_.get());
             }
         }
         return null;
