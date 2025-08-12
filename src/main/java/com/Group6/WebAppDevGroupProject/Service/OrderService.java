@@ -1,3 +1,4 @@
+
 package com.Group6.WebAppDevGroupProject.Service;
 
 import com.Group6.WebAppDevGroupProject.Models.MenuItem;
@@ -51,10 +52,43 @@ public class OrderService {
         }
         return null;
     }
+    // Allow cancellation only if more than 24 hours before due date
+    private static final long CANCEL_TIME_LIMIT_MS = 24 * 60 * 60 * 1000;
+
     public Order saveOrder(Order ord_) {
         handleStocks(ord_);
+        // Set status and timestamp if not set
+        if (ord_.getOrder_status() == null || ord_.getOrder_status().isEmpty()) {
+            ord_.setOrder_status("PENDING");
+        }
+        if (ord_.getOrder_time() == null) {
+            ord_.setOrder_time(new java.util.Date());
+        }
         return orderRepo.save(ord_);
     }
+    // Cancel order if more than 24 hours before due date
+    public boolean cancelOrder(long id_) {
+        Optional<Order> orderOpt = orderRepo.findById(id_);
+        if (orderOpt.isPresent()) {
+            Order order = orderOpt.get();
+            if (!"PENDING".equals(order.getOrder_status())) {
+                return false; // Only pending orders can be cancelled
+            }
+            long now = System.currentTimeMillis();
+            Date requestedDate = order.getOrder_requested();
+            if (requestedDate == null) {
+                return false; // No due date set
+            }
+            long requestedTime = requestedDate.getTime();
+            if (requestedTime - now >= CANCEL_TIME_LIMIT_MS) {
+                order.setOrder_status("CANCELLED");
+                orderRepo.save(order);
+                return true;
+            }
+        }
+        return false;
+    }
+
     public Order updateOrder(long id_, Order ord_) {
         return orderRepo.findById(id_).map(order -> {
             order.setOrder_items(ord_.getOrder_items());

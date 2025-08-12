@@ -13,19 +13,25 @@
         </thead>
         <tbody>
         <tr th:each="order : ${orders}">
-            <td th:text="${order.id}"></td>
+            <td th:text="${order.order_id}"></td>
             <td>
                 <ul>
                     <li th:each="item : ${order.items}" th:text="${item.name}"></li>
                 </ul>
             </td>
-            <td th:text="${order.status}"></td>
+            <td th:text="${order.order_status}"></td>
             <td>
-                <form th:if="${order.status == 'PENDING'}"
-                      th:action="@{/order/cancel/{id}(id=${order.id})}"
-                      method="post">
-                    <button type="submit">Cancel</button>
-                </form>
+                <div th:if="${order.order_status == 'PENDING'}">
+                    <form th:if="${#dates.diff(order.order_requested, T(java.util.Date).new()) > 24*60*60*1000}"
+                          th:action="@{/orders/delete/{id}(id=${order.order_id})}"
+                          method="get">
+                        <button type="submit">Cancel</button>
+                    </form>
+                    <span th:if="${#dates.diff(order.order_requested, T(java.util.Date).new()) <= 24*60*60*1000}">
+                        <button type="button" disabled>Cancel</button>
+                        <span style="color:red;">Cannot cancel within 24 hours of due date</span>
+                    </span>
+                </div>
             </td>
         </tr>
         </tbody>
