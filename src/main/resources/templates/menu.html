@@ -5,7 +5,19 @@
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
-<header><h1>Menu</h1></header>
+<header>
+    <nav style="background:#223344; color:#fff; padding:10px; display:flex; justify-content:space-between; align-items:center;">
+        <div>
+            <a href="/menu" style="color:#fff; text-decoration:none; margin-right:20px;">Menu</a>
+            <a href="/order/my-orders" style="color:#fff; text-decoration:none; margin-right:20px;">My Orders</a>
+            <a href="/logout" style="color:#fff; text-decoration:none;">Logout</a>
+        </div>
+        <div th:if="${username}">
+            <span th:text="${username}"></span> (<span th:text="${role}"></span>)
+        </div>
+    </nav>
+    <h1>Menu</h1>
+</header>
 <div class="container">
     <table class="table">
         <thead>
@@ -18,13 +30,19 @@
             <td th:text="${item.price}"></td>
             <td th:text="${item.stock}"></td>
             <td>
-                <form th:action="@{/order/add/{id}(id=${item.id})}" method="post">
+                <form th:action="@{/order/add}" method="post">
+                    <input type="hidden" name="itemId" th:value="${item.id}" />
                     <button type="submit">Add to Order</button>
                 </form>
             </td>
         </tr>
         </tbody>
     </table>
+    <div style="margin-top:30px; text-align:right;">
+    <form action="/order/checkout" method="post">
+            <button type="submit" style="padding:10px 20px; background:#223344; color:#fff; border:none; border-radius:4px;">Checkout</button>
+        </form>
+    </div>
 </div>
 </body>
 </html>

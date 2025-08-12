@@ -38,7 +38,7 @@ public class MenuitemService {
         return menuRepository.findAll();
     }
 
-    public Optional<MenuItem> getMenuItemById(Long id) {
+    public Optional<MenuItem> getMenuItemById(Integer id) {
         return menuRepository.findById(id);
     }
 
@@ -46,7 +46,7 @@ public class MenuitemService {
         return menuRepository.save(item);
     }
 
-    public MenuItem updateMenuItem(Long id, MenuItem item) {
+    public MenuItem updateMenuItem(Integer id, MenuItem item) {
         return menuRepository.findById(id)
                 .map(existing -> {
                     existing.setName(item.getName());
@@ -58,7 +58,7 @@ public class MenuitemService {
                 .orElse(null);
     }
 
-    public void deleteMenuItem(Long id) {
+    public void deleteMenuItem(Integer id) {
         menuRepository.deleteById(id);
     }
 }

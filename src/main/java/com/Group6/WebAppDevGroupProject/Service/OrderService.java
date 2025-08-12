@@ -1,4 +1,3 @@
-
 package com.Group6.WebAppDevGroupProject.Service;
 
 import com.Group6.WebAppDevGroupProject.Models.MenuItem;
@@ -7,13 +6,13 @@ import com.Group6.WebAppDevGroupProject.Repository.MenuRepository;
 import com.Group6.WebAppDevGroupProject.Repository.OrderRepository;
 import com.Group6.WebAppDevGroupProject.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
+@Service
 public class OrderService {
+
     @Autowired
     private OrderRepository orderRepo;
     @Autowired
@@ -21,71 +20,141 @@ public class OrderService {
     @Autowired
     private MenuRepository menuRepository;
 
+    // Delete order by ID
+    public void deleteOrder(Integer orderId) {
+        orderRepo.deleteById(orderId);
+    }
 
+    // Create empty order for a user, status PENDING means active/open
+    public Order createOrderForUser(Integer userId) {
+        Order order = new Order();
+        order.setUser_id(userId);
+        order.setOrder_status("PENDING");  // Active status
+        order.setOrder_time(new Date());
+        order.setOrder_items("[]");
+        return orderRepo.save(order);
+    }
+
+    // Add menu item to order
+    public void addItemToOrder(Order order, Integer itemId) {
+        List<String> itemsList = parseItems(order.getOrder_items());
+        itemsList.add(String.valueOf(itemId));
+        order.setOrder_items(formatItems(itemsList));
+        orderRepo.save(order);
+    }
+
+    // Remove menu item by index
+    public void removeItemFromOrder(Order order, int idx) {
+        List<String> itemsList = parseItems(order.getOrder_items());
+        if (idx >= 0 && idx < itemsList.size()) {
+            itemsList.remove(idx);
+        }
+        order.setOrder_items(formatItems(itemsList));
+        orderRepo.save(order);
+    }
+
+    // Update item quantity by index
+    public void updateItemQuantity(Order order, int idx, int quantity) {
+        List<String> itemsList = parseItems(order.getOrder_items());
+        if (idx >= 0 && idx < itemsList.size() && quantity > 0) {
+            String itemId = itemsList.get(idx);
+            // Remove old occurrences of that index
+            itemsList.remove(idx);
+            // Insert new quantity times
+            for (int i = 0; i < quantity; i++) {
+                itemsList.add(idx, itemId);
+            }
+        }
+        order.setOrder_items(formatItems(itemsList));
+        orderRepo.save(order);
+    }
+
+    // Parse stored order item IDs into list of strings
+    private List<String> parseItems(String itemsStr) {
+        if (itemsStr == null || itemsStr.trim().equals("[]") || itemsStr.trim().isEmpty()) {
+            return new ArrayList<>();
+        }
+        return new ArrayList<>(Arrays.asList(itemsStr.replaceAll("[\\[\\]]", "").split(",")));
+    }
+
+    // Format list of item IDs back into string for DB
+    private String formatItems(List<String> items) {
+        return "[" + String.join(",", items) + "]";
+    }
+
+    // Fetch all orders in DB
     public List<Order> getAllOrders() {
         return orderRepo.findAll();
     }
+
+    // Fetch all active orders (PENDING status)
     public List<Order> getAllActiveOrders() {
         return orderRepo.findAllActive();
     }
-    public List<Order> getAllOrdersFromUser(long id_) {
-        if (userRepo.findById(id_).isPresent()) {
-            return orderRepo.findAllByUser(id_);
+
+    // Fetch all orders for a user (any status)
+    public List<Order> getAllOrdersFromUser(Integer userId) {
+        if (userRepo.findById(userId).isPresent()) {
+            return orderRepo.findAllByUser(userId);
         }
-        return null;
-    }
-    public List<Order> getAllActiveOrdersFromUser(long id_) {
-        if (userRepo.findById(id_).isPresent()) {
-            return orderRepo.findAllActiveByUser(id_);
-        }
-        return null;
-    }
-    public Order getOrderById(long id_) {
-        return orderRepo.findById(id_).orElse(null);
+        return Collections.emptyList();
     }
 
-    public List<MenuItem> getMenuItemsFromOrder(long id_) {
-        Optional<Order> ord_ = orderRepo.findById(id_);
-        if (ord_.isPresent()) {
-            if (!ord_.get().getOrder_items().equals("[]")) {
-                List<String> orderItemsIdsStr = Arrays.stream(ord_.get().getOrder_items().replaceAll("[\\[\\]]", "").split(",")).toList();
-                long[] orderItemsIds = orderItemsIdsStr.stream().map(String::trim).mapToLong(Long::parseLong).toArray();
-                List<MenuItem> menuItems = new ArrayList<>();
-                for (int x_ = 0; x_ <= orderItemsIds.length; x_ = x_ + 1) {
-                    menuItems.add(menuRepository.findById(orderItemsIds[x_]).orElse(null));
-                }
-                return menuItems;
+    // Fetch only active orders for a user (status PENDING)
+    public List<Order> getAllActiveOrdersFromUser(Integer userId) {
+        if (userRepo.findById(userId).isPresent()) {
+            return orderRepo.findAllActiveByUser(userId);
+        }
+        return Collections.emptyList();
+    }
+
+    // Fetch order by ID
+    public Order getOrderById(Integer orderId) {
+        return orderRepo.findById(orderId).orElse(null);
+    }
+
+    // Convert stored order item IDs into list of MenuItem objects
+    public List<MenuItem> getMenuItemsFromOrder(Integer orderId) {
+        Optional<Order> ordOpt = orderRepo.findById(orderId);
+        if (ordOpt.isEmpty()) return Collections.emptyList();
+
+        List<String> ids = parseItems(ordOpt.get().getOrder_items());
+        List<MenuItem> menuItems = new ArrayList<>();
+
+        for (String idStr : ids) {
+            try {
+                Integer menuItemId = Integer.parseInt(idStr.trim());
+                menuRepository.findById(menuItemId).ifPresent(menuItems::add);
+            } catch (NumberFormatException e) {
+                System.err.println("Invalid menu item ID: " + idStr);
             }
         }
-        return null;
+        return menuItems;
     }
 
-    // Allow cancellation only if more than 24 hours before due date
-    private static final long CANCEL_TIME_LIMIT_MS = 24 * 60 * 60 * 1000;
+    private static final long CANCEL_TIME_LIMIT_MS = 60L * 60L * 1000L; // 1 hour
 
+    // Save or update order, set defaults if missing
     public Order saveOrder(Order ord_) {
-        // Set status and timestamp if not set
         if (ord_.getOrder_status() == null || ord_.getOrder_status().isEmpty()) {
             ord_.setOrder_status("PENDING");
         }
         if (ord_.getOrder_time() == null) {
-            ord_.setOrder_time(new java.util.Date());
+            ord_.setOrder_time(new Date());
         }
         return orderRepo.save(ord_);
     }
-    // Cancel order if more than 24 hours before due date
-    public boolean cancelOrder(long id_) {
-        Optional<Order> orderOpt = orderRepo.findById(id_);
+
+    // Cancel order if within allowed time and status is PENDING
+    public boolean cancelOrder(Integer orderId) {
+        Optional<Order> orderOpt = orderRepo.findById(orderId);
         if (orderOpt.isPresent()) {
             Order order = orderOpt.get();
-            if (!"PENDING".equals(order.getOrder_status())) {
-                return false; // Only pending orders can be cancelled
-            }
-            long now = System.currentTimeMillis();
+            if (!"PENDING".equals(order.getOrder_status())) return false;
             Date requestedDate = order.getOrder_requested();
-            if (requestedDate == null) {
-                return false; // No due date set
-            }
+            if (requestedDate == null) return false;
+
+            long now = System.currentTimeMillis();
             long requestedTime = requestedDate.getTime();
             if (requestedTime - now >= CANCEL_TIME_LIMIT_MS) {
                 order.setOrder_status("CANCELLED");
@@ -96,16 +165,14 @@ public class OrderService {
         return false;
     }
 
-    public Order updateOrder(long id_, Order ord_) {
-        return orderRepo.findById(id_).map(order -> {
-            order.setOrder_items(ord_.getOrder_items());
-            order.setOrder_requested(ord_.getOrder_requested());
-            order.setOrder_time(ord_.getOrder_time());
-            order.setOrder_status(ord_.getOrder_status());
+    // Update order details by ID
+    public Order updateOrder(Integer orderId, Order o) {
+        return orderRepo.findById(orderId).map(order -> {
+            order.setOrder_items(o.getOrder_items());
+            order.setOrder_requested(o.getOrder_requested());
+            order.setOrder_time(o.getOrder_time());
+            order.setOrder_status(o.getOrder_status());
             return orderRepo.save(order);
         }).orElse(null);
-    }
-    public void deleteOrder(long id_) {
-        orderRepo.deleteById(id_);
     }
 }

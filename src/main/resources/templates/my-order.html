@@ -2,40 +2,51 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>My Orders</title>
-    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/styles.css}" />
 </head>
 <body>
-<header><h1>My Orders</h1></header>
-<div class="container">
-    <table class="table">
+<h2>My Orders</h2>
+
+<div th:if="${error}" style="color:red;">
+    <p th:text="${error}"></p>
+</div>
+
+<div th:if="${orders != null and !orders.isEmpty()}">
+    <table border="1">
         <thead>
-        <tr><th>Order ID</th><th>Items</th><th>Status</th><th>Action</th></tr>
+        <tr>
+            <th>Order ID</th>
+            <th>Requested Time</th>
+            <th>Status</th>
+            <th>Items</th>
+            <th>Actions</th>
+        </tr>
         </thead>
         <tbody>
         <tr th:each="order : ${orders}">
             <td th:text="${order.order_id}"></td>
-            <td>
-                <ul>
-                    <li th:each="item : ${order.items}" th:text="${item.name}"></li>
-                </ul>
-            </td>
+            <td th:text="${#dates.format(order.order_requested, 'yyyy-MM-dd HH:mm')}"></td>
             <td th:text="${order.order_status}"></td>
             <td>
-                <div th:if="${order.order_status == 'PENDING'}">
-                    <form th:if="${#dates.diff(order.order_requested, T(java.util.Date).new()) > 24*60*60*1000}"
-                          th:action="@{/orders/delete/{id}(id=${order.order_id})}"
-                          method="get">
-                        <button type="submit">Cancel</button>
-                    </form>
-                    <span th:if="${#dates.diff(order.order_requested, T(java.util.Date).new()) <= 24*60*60*1000}">
-                        <button type="button" disabled>Cancel</button>
-                        <span style="color:red;">Cannot cancel within 24 hours of due date</span>
-                    </span>
-                </div>
+                <ul>
+                    <li th:each="item : ${orderItemsMap[order.order_id]}"
+                        th:text="${item.name} + ' - $' + item.price"></li>
+                </ul>
+            </td>
+            <td>
+                <form th:action="@{/order/cancel/{id}(id=${order.order_id})}" method="post">
+                    <button type="submit"
+                            th:if="${order.order_status != 'CANCELLED'}">Cancel</button>
+                </form>
             </td>
         </tr>
         </tbody>
     </table>
 </div>
+
+<div th:if="${orders == null or orders.isEmpty()}">
+    <p>You have no previous orders.</p>
+</div>
+
 </body>
 </html>

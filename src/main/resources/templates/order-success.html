@@ -5,9 +5,27 @@
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
-<header><h1>Order Placed!</h1></header>
+<header>
+    <nav style="background:#223344; color:#fff; padding:10px; display:flex; justify-content:space-between; align-items:center;">
+        <div>
+            <a href="/menu" style="color:#fff; text-decoration:none; margin-right:20px;">Menu</a>
+            <a href="/order/my-orders" style="color:#fff; text-decoration:none; margin-right:20px;">My Orders</a>
+            <a href="/logout" style="color:#fff; text-decoration:none;">Logout</a>
+        </div>
+    </nav>
+    <h1>Order Placed!</h1>
+</header>
 <div class="container">
     <p>✅ Your order has been successfully placed!</p>
+    <div th:if="${order != null}">
+        <h2>Order Summary</h2>
+        <p><strong>Order ID:</strong> <span th:text="${order.order_id}"></span></p>
+        <p><strong>Items:</strong></p>
+        <ul>
+            <li th:each="item : ${orderSummary}" th:text="${item.name} + ' ($' + ${item.price} + ') x ' + ${item.quantity}"></li>
+        </ul>
+    <p><strong>Total:</strong> $<span th:text="${#numbers.formatDecimal(total, 1, 'COMMA', 2, 'POINT')}"></span></p>
+    </div>
     <a href="/menu"><button>Back to Menu</button></a>
 </div>
 </body>

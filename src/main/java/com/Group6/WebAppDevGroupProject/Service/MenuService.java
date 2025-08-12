@@ -38,15 +38,23 @@ public class MenuService {
         return menuRepository.findAll();
     }
 
-    public Optional<MenuItem> getMenuItemById(Long id) {
+    public Optional<MenuItem> findById(Integer id) {
         return menuRepository.findById(id);
     }
 
-    public MenuItem addMenuItem(MenuItem item) {
+    public MenuItem save(MenuItem item) {
         return menuRepository.save(item);
     }
 
-    public MenuItem updateMenuItem(Long id, MenuItem item) {
+    public boolean existsById(Integer id) {
+        return menuRepository.existsById(id);
+    }
+
+    public void deleteById(Integer id) {
+        menuRepository.deleteById(id);
+    }
+
+    public MenuItem updateMenuItem(Integer id, MenuItem item) {
         return menuRepository.findById(id)
                 .map(existing -> {
                     existing.setName(item.getName());
@@ -58,7 +66,7 @@ public class MenuService {
                 .orElse(null);
     }
 
-    public void deleteMenuItem(Long id) {
+    public void deleteMenuItem(Integer id) {
         menuRepository.deleteById(id);
     }
 }
